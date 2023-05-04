@@ -1,12 +1,4 @@
 /*
-BLACKJACK
-딜러와 플레이어 중 카드의 합이 21 또는 
-21에 가장 가까운 숫자를 가지는 쪽이 이기는 게임
-
-A = 1 or 11
-2, 3, 4, 5, 6, 7, 8, 9
-J, Q, K  = 10
-
 Blackjack
 처음 두 장의 카드 합이 21일 경우를 말하며 배팅 금액의 1.5배를 받음
 
@@ -48,62 +40,17 @@ Double Down
 Split
 플레이어가 받은 처음 두 장의 카드가 같은 숫자인 경우에는 두 장의 카드를 나누어서 각각 베팅하여 게임을 진행할 수 있음
    이때 베팅금액은 최초 베팅액과 동일한 금액이어야 합니다.
- 
-
-=사실 색깔을 상관이 없잖아
-계산은 숫자로 하는거니까
-
-A ~ K
-2차원 배열로
-13장씩 4개 
-
-4행 13열 배열로 만들고
-A = 1 or 11
-J, Q, K = 10
+ */
 
 
 
-
-
-BLACKJACK 
-game rule : 카드를 뽑아서 모두 더한 값이 21에 가장 가까운 플레이어가 승리
-A = 1 or 11
-2, 3, 4, 5, 6, 7, 8, 9
-J, Q, K = 10
-
-처음 게임을 시작하면 모두에게 카드 2장씩 배부
-첫 2장을 공개하기 전에 Pair Bet 가능 > 같은 가치의 카드인지 배팅 > 맞을 경우 11배의 코인을 받음
-
-각 게임 규칙들 한 클래스로 묶고 메소드화
-
-카드는 총 52장 예정
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
+public class Game {
+    
 
 
 
-
-
-gameParticipant
-dealer
-player
-
-게임 참가자 class
-딜러와 플레이어 class
-처음에 플레이어 숫자 입력 받고 객체 배열 만들어서 객체 생성하기
-
-
-
-
-*/
- 
-
-public class BlackJack {
-    public static void main(String[] args) {
-        CardShuffle cs = new CardShuffle();
-        System.out.println(cs.shuffle());
-        
+    int blackjack() { // 
+        return 0;
     }
+
 }
