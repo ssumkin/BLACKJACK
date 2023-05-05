@@ -1,5 +1,6 @@
 public abstract class GameParticipant { // 게임 참가자
     int total;
+    char[] deck;
 
     public abstract int totalCalc(int[] card);
 }
@@ -20,6 +21,12 @@ class Player extends GameParticipant {
     Player() {}
     Player(int chips) {
         this.chips = chips;
+    }
+
+    public char[] nowDeck(char[] card) {
+        
+
+        return deck;
     }
 
     public int totalCalc(int[] card) {

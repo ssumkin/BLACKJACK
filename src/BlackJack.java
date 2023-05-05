@@ -1,119 +1,140 @@
-/*
-BLACKJACK
-딜러와 플레이어 중 카드의 합이 21 또는 
-21에 가장 가까운 숫자를 가지는 쪽이 이기는 게임
-
-A = 1 or 11
-2, 3, 4, 5, 6, 7, 8, 9
-J, Q, K  = 10
-
-Blackjack
-처음 두 장의 카드 합이 21일 경우를 말하며 배팅 금액의 1.5배를 받음
-
-Bust
-카드 합이 21을 초과하면 베팅 금액을 잃게 됨
-
-Push
-플레이어와 딜러의 각각의 카드 합이 같을 경우 서로 비기게 됩니다.
-
-Stay
-테이블 위에서 손을 좌우로 흔든다.
-   플레이어가 추가 카드를 원하지 않을 경우를 말하며, 딜러는 카드의 합이 17 이상이면 추가 카드를 받을 수 없습니다.
-
-Hit
-테이블 위에서 손가락으로 톡톡 친다. 
-   플레이어가 처음 두 장의 카드 외에 딜러에게 추가카드를 요청하는 경우를 말합니다.
-
-Pair Bet
-플레이어가 최초로 받게 될 두 장의 카드가 같은 가치를 갖는 카드일거라 예상하고 베팅하는 경우를 말하며,
-   당첨 시 베팅 금액의 11배를 지급받게 됨.
-
-Surrender
-플레이어가 처음 두 장의 카드로 딜러의 카드를 이길 수 없다고 판단한 경우 게임을 포기하는 것
-   이 경우 최초 베팅액의 1/2을 잃게 됩니다.
-
-Insurance
-딜러의 오픈 카드가 Ace일 경우 플레이어는 베팅액의 1/2범위 내에서 보험금을 걸 수 있음
-   1. 딜러가 블랙잭인 경우 - 보험금의 두 배를 받습니다.
-   2. 딜러가 블랙잭이 아닐 경우 - 보험금을 잃게 됩니다.
-
-Even Money
-딜러의 오픈 카드가 Ace인 경우, Insurance전에 블랙잭의 핸드를 가지고 있는 플레이어에게 Even Money 여부를 확인하게 됩니다.
-   1. Even Money를 선택하게 되면 즉시 베팅액의 1배를 지급받게 됩니다.
-   2. (Even Money 를 선택하지 않은 상태에서, 딜러가 블랙잭인 경우 Push 처리 됩니다.)
-
-Double Down
-플레이어의 요청 시 한 장의 추가 카드만 받는다는 조건으로 플레이어의 현재 베팅 금액 내에서 추가 베팅을 더 할 수 있음
-
-Split
-플레이어가 받은 처음 두 장의 카드가 같은 숫자인 경우에는 두 장의 카드를 나누어서 각각 베팅하여 게임을 진행할 수 있음
-   이때 베팅금액은 최초 베팅액과 동일한 금액이어야 합니다.
- 
-
-=사실 색깔을 상관이 없잖아
-계산은 숫자로 하는거니까
-
-A ~ K
-2차원 배열로
-13장씩 4개 
-
-4행 13열 배열로 만들고
-A = 1 or 11
-J, Q, K = 10
-
-
-
-
-
-BLACKJACK 
-game rule : 카드를 뽑아서 모두 더한 값이 21에 가장 가까운 플레이어가 승리
-A = 1 or 11
-2, 3, 4, 5, 6, 7, 8, 9
-J, Q, K = 10
-
-처음 게임을 시작하면 모두에게 카드 2장씩 배부
-첫 2장을 공개하기 전에 Pair Bet 가능 > 같은 가치의 카드인지 배팅 > 맞을 경우 11배의 코인을 받음
-
-각 게임 규칙들 한 클래스로 묶고 메소드화
-
-카드는 총 52장 예정
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-A, 2, 3, 4, 5, 6, 7, 8, 9, J, Q, K
-
-
-
-
-
-gameParticipant
-dealer
-player
-
-게임 참가자 class
-딜러와 플레이어 class
-처음에 플레이어 숫자 입력 받고 객체 배열 만들어서 객체 생성하기
-
-
-
-
-*/
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Scanner;
+import java.lang.Math;
 
 public class BlackJack {
-    public static void main(String[] args) {
-         CardShuffle cs = new CardShuffle();
+ 
+   void gameDescription() { // 초기 게임 안내
+      System.out.print("\033[H\033[2J"); // 터미널 청소
+      System.out.println("BLACKJACK");
+      System.out.println("1. 게임 시작");
+      System.out.println("2. 게임 규칙");
+      System.out.println("3. 게임 종료");
+      System.out.println("숫자를 입력해 주세요.");
+      System.out.println("===========================");
+      System.out.print(">> ");
+   }
 
 
-         System.out.println(cs.drawCard()); 
 
-         for(int i = 0; i < cs.cardList.length; i++) {
-            System.out.println(cs.cardList[i]);   
+   void gameStart() {
+      Scanner scanner = new Scanner(System.in);
+      CardShuffle cs = new CardShuffle();
+
+      System.out.print("\033[H\033[2J");
+      System.out.println("플레이어 숫자를 입력해 주세요. (1 ~ 7 입력 가능)");
+      System.out.print(">> ");
+      int gamerOfNum = scanner.nextInt(); // 플레이어 전체 숫자 입력
+
+      if(gamerOfNum < 1 || gamerOfNum > 7) {
+         System.out.print("\033[H\033[2J");
+         System.out.print("플레이어 숫자를 다시 입력해 주세요 : ");
+         return;
+      }
+
+      int deckSize = (int)Math.ceil(52 / (gamerOfNum + 1));  
+
+      Dealer dealer = new Dealer(); // 딜러 객체 생성
+      dealer.deck = new char[deckSize]; // 딜러 덱 크기 설정
+      dealer.deck[0] = cs.drawCard();
+      dealer.deck[1] = cs.drawCard();
+
+      Player[] player = new Player[gamerOfNum]; // 플레이어 객체 배열 생성
+      for(int i = 0; i < player.length; i++) { // 플레이어마다 객체 생성
+         System.out.print("Player" + (i+1) + " 칩 개수 입력 : ");
+         int playerChips = scanner.nextInt();
+
+         player[i] = new Player(playerChips); // 플레이어 마다 얼마 있는지 입력
+         player[i].deck = new char[deckSize]; // 플레이어 덱 크기 설정
+         player[i].deck[0] = cs.drawCard();
+         player[i].deck[1] = cs.drawCard();
+      }
+
+       
+      for(int i = 0; i < cs.cardList.length; i++) {
+         System.out.println(cs.cardList[i]);
+      }
+
+       
+   }
+
+
+   void showRule() { // 게임 규칙 설명
+      Scanner scanner = new Scanner(System.in);
+      
+      Rule rule = new Rule();
+      System.out.print("\033[H\033[2J");
+      rule.basicRule();
+
+      System.out.println("상세 규칙을 보려면 'd'를 입력해 주세요.");
+      System.out.println("그 외의 키를 누를 경우 게임 화면으로 넘어갑니다.");
+      System.out.println("===========================");
+      System.out.print(">> ");
+
+      char detail = scanner.next().charAt(0);
+   
+      if(detail == 'd') {
+         System.out.print("\033[H\033[2J");
+         rule.detailedRules();
+         System.out.println("규칙을 그만 보시려면 아무키나 입력해주세요.");
+         System.out.print(">> ");
+         
+         if(scanner.hasNext()) {
+            System.out.print("\033[H\033[2J");
+            gameDescription();
+         }
+      } else {
+         System.out.print("\033[H\033[2J");
+         gameDescription();
+      }
+      
+   }
+
+
+
+   public static void main(String[] args) {
+      Scanner scanner = new Scanner(System.in);
+      BlackJack blackJack = new BlackJack();
+      
+      
+      blackJack.gameDescription();
+
+      boolean gameLoop = true;
+      
+
+      while(gameLoop) {
+         int game = scanner.nextInt();
+         switch(game) {
+            case 1: {
+               blackJack.gameStart();
+               break;
+            }
+            case 2: {
+               blackJack.showRule();
+               break;
+            }
+            case 3: {
+               System.out.println("게임을 종료합니다.");
+               gameLoop = false;
+               break;
+            }
+            default: { 
+               System.out.println("1 ~ 3 사이의 숫자를 입력해 주세요.3");
+               System.out.print(">> ");
+               break;
+            }
          }
 
-         
+           
+       
+      }
+      
         
-    }
+   }
 }
+
+
+
+
+
+
+
