@@ -98,12 +98,22 @@ player
 
 
 */
- 
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BlackJack {
     public static void main(String[] args) {
-        CardShuffle cs = new CardShuffle();
-        System.out.println(cs.shuffle());
+         CardShuffle cs = new CardShuffle();
+
+
+         System.out.println(cs.drawCard()); 
+
+         for(int i = 0; i < cs.cardList.length; i++) {
+            System.out.println(cs.cardList[i]);   
+         }
+
+         
         
     }
 }
