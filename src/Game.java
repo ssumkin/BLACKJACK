@@ -115,4 +115,55 @@ public class Game {
       return battingChips;
    }
 
+   int bust() {
+
+      return 0;
+   }
+
+   int push() {
+
+      return 0;
+   }
+
+   int stay() {
+
+      return 0;
+   }
+
+   int hit() {
+
+      return 0;
+   }
+
+   int pairBet() {
+
+      return 0;
+   }
+
+   int surrender() {
+
+      return 0;
+   }
+
+   int insurance() {
+
+      return 0;
+   }
+
+   int evenMoney() {
+
+      return 0;
+   }
+
+   int doubleDown() {
+
+      return 0;
+   }
+
+   int spli() {
+
+      return 0;
+   }
+
+
 }
