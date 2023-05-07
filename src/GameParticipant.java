@@ -16,10 +16,10 @@ class Dealer extends GameParticipant {
 }
 
 class Player extends GameParticipant {
-    int chips;
+    Double chips;
 
     Player() {}
-    Player(int chips) {
+    Player(Double chips) {
         this.chips = chips;
     }
 

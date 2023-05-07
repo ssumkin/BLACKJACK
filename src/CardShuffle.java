@@ -19,15 +19,13 @@ public class CardShuffle {
 
     public char drawCard() {
 
-
         int index1 = rand.nextInt(cardList.length);
         int index2 = rand.nextInt(cardList[index1].size());
 
         char a = cardList[index1].get(index2);
 
         cardList[index1].remove(index2);
-        
- 
+
         return a;
     }
 

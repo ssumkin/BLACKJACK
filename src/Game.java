@@ -49,8 +49,70 @@ public class Game {
 
 
 
-    int blackjack() { // 
-        return 0;
-    }
+   int sumOfCards(char[] deck) {
+
+      char[] currentDeck = deck.clone();
+      int deckTotal = 0;
+
+
+      for(int i = 0; i < currentDeck.length; i++) {
+         switch(currentDeck[i]) {
+            case 'A': {
+               deckTotal += 10;
+            }
+            case '2': {
+               deckTotal += 2;
+            }
+            case '3': {
+               deckTotal += 3;
+            }
+            case '4': {
+               deckTotal += 4;
+            }
+            case '5': {
+               deckTotal += 5;
+            }
+            case '6': {
+               deckTotal += 6;
+            }
+            case '7': {
+               deckTotal += 7;
+            }
+            case '8': {
+               deckTotal += 8;
+            }
+            case '9': {
+               deckTotal += 9;
+            }
+            case 'J':
+            case 'Q':
+            case 'K': {
+               deckTotal += 10;
+            } 
+         }
+      }
+
+ 
+      return deckTotal;
+   }
+
+
+   Double blackjack(Double batting_chips, char[] deck) { // 
+      Double battingChips = batting_chips;
+      int cardsNum = 0;
+
+
+      Game game = new Game();
+
+      cardsNum = game.sumOfCards(deck);
+
+      if(cardsNum == 21) {
+         battingChips = battingChips * 1.5;
+      } else {
+         battingChips = 0.0;
+      }
+ 
+      return battingChips;
+   }
 
 }

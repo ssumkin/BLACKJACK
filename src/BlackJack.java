@@ -1,8 +1,11 @@
+import java.util.Arrays;
 import java.util.Scanner;
 import java.lang.Math;
 
 public class BlackJack {
- 
+   Scanner scanner = new Scanner(System.in);
+
+
    void gameDescription() { // 초기 게임 안내
       System.out.print("\033[H\033[2J"); // 터미널 청소
       System.out.println("BLACKJACK");
@@ -16,8 +19,22 @@ public class BlackJack {
 
 
 
-   void gameStart() {
-      Scanner scanner = new Scanner(System.in);
+   void mainGame(int gamer_of_num, Dealer dealer, Player[] player) {
+      
+      
+      int gamerOfNum = gamer_of_num;
+      int endGame = 0; // 각 플레이어 마다 게임이 끝났는지 체크하는 용
+      
+      Game game = new Game();
+
+      // while(endGame < gamerOfNum) {
+
+      // }  
+ 
+   }
+
+
+   void gameStart() { 
       CardShuffle cs = new CardShuffle();
 
       System.out.print("\033[H\033[2J");
@@ -41,7 +58,7 @@ public class BlackJack {
       Player[] player = new Player[gamerOfNum]; // 플레이어 객체 배열 생성
       for(int i = 0; i < player.length; i++) { // 플레이어마다 객체 생성
          System.out.print("Player" + (i+1) + " 칩 개수 입력 : ");
-         int playerChips = scanner.nextInt();
+         Double playerChips = scanner.nextDouble();
 
          player[i] = new Player(playerChips); // 플레이어 마다 얼마 있는지 입력
          player[i].deck = new char[deckSize]; // 플레이어 덱 크기 설정
@@ -50,11 +67,12 @@ public class BlackJack {
       }
 
        
-      for(int i = 0; i < cs.cardList.length; i++) {
-         System.out.println(cs.cardList[i]);
-      }
-
+      
+      BlackJack blackJack = new BlackJack();
+      blackJack.mainGame(gamerOfNum, dealer, player);
+      
        
+
    }
 
 
@@ -91,18 +109,18 @@ public class BlackJack {
 
 
 
-   public static void main(String[] args) {
-      Scanner scanner = new Scanner(System.in);
+   public static void main(String[] args) { 
       BlackJack blackJack = new BlackJack();
       
       
+      
       blackJack.gameDescription();
-
       boolean gameLoop = true;
       
 
       while(gameLoop) {
-         int game = scanner.nextInt();
+         
+         int game = blackJack.scanner.nextInt();
          switch(game) {
             case 1: {
                blackJack.gameStart();
