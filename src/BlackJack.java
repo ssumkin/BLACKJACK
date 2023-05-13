@@ -24,13 +24,19 @@ public class BlackJack {
       
       int gamerOfNum = gamer_of_num;
       int endGame = 0; // 각 플레이어 마다 게임이 끝났는지 체크하는 용
-      
       Game game = new Game();
 
-      // while(endGame < gamerOfNum) {
+      int userChoice = scanner.nextInt();
+      
 
-      // }  
- 
+      game.hit();
+
+      while(endGame < gamerOfNum) {
+         switch(userChoice) {
+
+         }
+      }  
+
    }
 
 
