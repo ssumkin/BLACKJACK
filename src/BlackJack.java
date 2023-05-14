@@ -4,6 +4,7 @@ import java.lang.Math;
 
 public class BlackJack {
    Scanner scanner = new Scanner(System.in);
+   CardShuffle cs = new CardShuffle();
 
 
    void gameDescription() { // 초기 게임 안내
@@ -20,28 +21,116 @@ public class BlackJack {
 
 
    void mainGame(int gamer_of_num, Dealer dealer, Player[] player) {
-      
-      
-      int gamerOfNum = gamer_of_num;
+      Game[] game = new Game[gamer_of_num];
+
       int endGame = 0; // 각 플레이어 마다 게임이 끝났는지 체크하는 용
-      Game game = new Game();
+      int[] playerEndGame = new int[gamer_of_num];
 
-      int userChoice = scanner.nextInt();
+      int round = 0; // 게임 횟수 > 2장을 처음 받았을 때만 가능한 것들이 있기 때문
+      int userChoice;
+
+      for(int i = 0; i < game.length; i++) {
+         System.out.print("Player" + (i+1) + "의 배팅 금액을 입력 : "); 
+         double battingChips = scanner.nextDouble();
+          
+
+         if(player[i].chips < battingChips) {
+            System.out.println("현재 칩 개수 : " + player[i].chips);
+            System.out.println("가지고 있는 칩보다 배팅을 많이 할 수 없습니다. 다시 입력해 주세요.");
+            i--;
+            continue;
+         }
+
+         player[i].chips -= battingChips;
+
+         game[i] = new Game(battingChips);
+      }
+       
+
+      System.out.print("\033[H\033[2J");  
+      
+      boolean mainGameLoop = true;
+
       
 
-      game.hit();
+       
+      while(mainGameLoop) {
+         
+         for(int i = 0; i < player.length; i++) {
+            
+            if(playerEndGame[i] == 1) { // 게임 끝난 플레이어에겐 묻지 않고 넘기기
+               continue;
+            }
 
-      while(endGame < gamerOfNum) {
-         switch(userChoice) {
+            System.out.print("Player" + (i+1) + " 현재 덱 : ");
+            player[i].nowDeck(); 
+            int playerSum = player[i].sumOfCards();
+            System.out.println(playerSum);
 
+            
+
+            System.out.println("BLACKJACK(1), ");
+            userChoice = scanner.nextInt();
+            
+            switch(userChoice) {
+               case 1:
+                  game[i].blackjack();
+                  break;  
+               case 3:
+                  
+                  break;
+               case 4:
+                  game[i].stay();
+                  break;
+               case 5:
+                  game[i].hit(cs.drawCard(), player, i);
+                  break;
+               case 6:
+                  game[i].pairBet();
+                  break;
+               case 7:
+                  game[i].surrender();
+                  break;
+               case 8:
+                  game[i].insurance();
+                  break;
+               case 9:
+                  game[i].evenMoney();
+                  break;
+               case 10:
+                  game[i].doubleDown();
+                  break;
+            }
+
+            if(playerSum > 21) {
+               game[i].bust();
+            }
+
+            // game[i].push();
+
+            
          }
+         
+         round++;
+
+         for (int i : playerEndGame) {
+            endGame += i; 
+         }
+
+         if(endGame == gamer_of_num) {
+            break;
+         }
+         
+      
       }  
 
    }
 
 
-   void gameStart() { 
-      CardShuffle cs = new CardShuffle();
+
+
+
+   void gameStart() {  
 
       System.out.print("\033[H\033[2J");
       System.out.println("플레이어 숫자를 입력해 주세요. (1 ~ 7 입력 가능)");
