@@ -60,6 +60,9 @@ class Dealer extends GameParticipant {
 
 class Player extends GameParticipant {
     Double chips;
+    Double pairbatChips;
+    Double insuranceChips;
+
 
 
     Player() {}

@@ -45,15 +45,11 @@ public class BlackJack {
 
          game[i] = new Game(battingChips);
       }
-       
-
+      
       System.out.print("\033[H\033[2J");  
       
       boolean mainGameLoop = true;
-
-      
-
-       
+ 
       while(mainGameLoop) {
          
          for(int i = 0; i < player.length; i++) {
@@ -62,31 +58,43 @@ public class BlackJack {
                continue;
             }
 
+            if(round == 0) {
+
+            }
+
             System.out.print("Player" + (i+1) + " 현재 덱 : ");
             player[i].nowDeck(); 
             int playerSum = player[i].sumOfCards();
             System.out.println(playerSum);
 
-            
-
             System.out.println("BLACKJACK(1), ");
             userChoice = scanner.nextInt();
             
             switch(userChoice) {
+
+               /*
+                * 
+                * blackjack > 필요
+                  burst > 21 넘어서 진 것불필요
+
+                  stay > 카드 그만 받는 거라 굳이 어떤 메소드 안 만들어도 될 듯
+                * surren > 함수 호출 필요, 배팅액 0원으로 바꾸고 판 종료
+                pairbat은 아예 처음에 시작 할 때 배팅할 지 물어보기
+                
+
+                */
+
+
                case 1:
                   game[i].blackjack();
                   break;  
                case 3:
-                  
                   break;
                case 4:
                   game[i].stay();
                   break;
                case 5:
                   game[i].hit(cs.drawCard(), player, i);
-                  break;
-               case 6:
-                  game[i].pairBet();
                   break;
                case 7:
                   game[i].surrender();
@@ -117,10 +125,15 @@ public class BlackJack {
             endGame += i; 
          }
 
-         if(endGame == gamer_of_num) {
-            break;
+         if(endGame == gamer_of_num) { // 마지막 반복문 > 이 때 딜러 카드 연달아 뽑기
+
+
+            mainGameLoop = false;
          }
          
+
+
+          
       
       }  
 
