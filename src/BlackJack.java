@@ -74,7 +74,7 @@ public class BlackJack {
 
                /*
                 * 
-                * blackjack > 필요
+                * blackjack > case 필요 없음
                   burst > 21 넘어서 진 것불필요
 
                   stay > 카드 그만 받는 거라 굳이 어떤 메소드 안 만들어도 될 듯
@@ -126,8 +126,6 @@ public class BlackJack {
          }
 
          if(endGame == gamer_of_num) { // 마지막 반복문 > 이 때 딜러 카드 연달아 뽑기
-
-
             mainGameLoop = false;
          }
          
