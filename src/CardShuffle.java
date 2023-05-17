@@ -13,7 +13,7 @@ public class CardShuffle {
     CardShuffle() { // 생성자에 A ~ K 카드를 넣는 반복문 써서 객체 생성시 바로 덱 구성 되도록 설정
         for(int i = 0; i < cardList.length; i++) {
             cardList[i] = new ArrayList<>(Arrays.asList(
-               'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K'));
+               'A', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K'));
         }
     }
 

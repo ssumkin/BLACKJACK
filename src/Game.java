@@ -44,15 +44,20 @@ public class Game {
    }
 
    // 처음 받는 2개의 카드가 동일한 가치의 카드인지 예측 하는 것
-   // 맞다면 
+   // 맞다면 11배
    int pairBet() {
 
       return 0;
    }
 
-   int surrender() { // 서렌치는 것
+   double surrender(Player[] player, int player_order) { // 서렌치는 것 배팅액의 절반 만 잃음
+      this.battingChips = 0.0;
 
-      return 0;
+      for(int i = 0; i < player[player_order].deck.length; i++) {
+            player[player_order].deck[i] = 0;
+      } 
+
+      return this.battingChips;
    }
 
 // 딜러의 오픈카드가 A일 경우 배팅액의 1/2범위 내에서 보험금 걸기
@@ -73,10 +78,23 @@ public class Game {
       return 0;
    }
 
-   int doubleDown() { // 한 장의 카드만 더 받고 최초 배팅금액 한도 내에서 추가로 배팅
+   char doubleDown(char card, Player[] player, int player_order, int batting_chips) { // 한 장의 카드만 더 받고 최초 배팅금액 한도 내에서 추가로 배팅
+      this.battingChips += batting_chips;
 
-      return 0;
+      for(int i = 0; i < player[player_order].deck.length; i++) {
+         if(player[player_order].deck[i] == 0) {
+            player[player_order].deck[i] = card;
+            break;
+         }
+      } 
+ 
+      System.out.println("새로운 카드 " + card);
+
+      return card; 
    }
+
+
+   
 
    // int split() {
 

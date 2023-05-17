@@ -1,11 +1,9 @@
-import java.util.Arrays;
 import java.util.Scanner;
 import java.lang.Math;
 
 public class BlackJack {
    Scanner scanner = new Scanner(System.in);
    CardShuffle cs = new CardShuffle();
-
 
    void gameDescription() { // 초기 게임 안내
       System.out.print("\033[H\033[2J"); // 터미널 청소
@@ -42,7 +40,6 @@ public class BlackJack {
          }
 
          player[i].chips -= battingChips;
-
          game[i] = new Game(battingChips);
       }
       
@@ -59,54 +56,37 @@ public class BlackJack {
             }
 
             if(round == 0) {
-
+               // 여기서 페어뱃 관련 처리
             }
 
+            System.out.println("Dealer open card [" + dealer.deck[0] + "]");
             System.out.print("Player" + (i+1) + " 현재 덱 : ");
-            player[i].nowDeck(); 
+            player[i].nowDeck();
             int playerSum = player[i].sumOfCards();
-            System.out.println(playerSum);
+            System.out.println("현재 덱 합계 : " + playerSum);
 
-            System.out.println("BLACKJACK(1), ");
+            System.out.println("HIT(1), STAY(2), DOUBLEDOWN(3), INSURANCE(4), EVENMONEY(5), SURRENDER(6)");
             userChoice = scanner.nextInt();
             
-            switch(userChoice) {
-
-               /*
-                * 
-                * blackjack > case 필요 없음
-                  burst > 21 넘어서 진 것불필요
-
-                  stay > 카드 그만 받는 거라 굳이 어떤 메소드 안 만들어도 될 듯
-                * surren > 함수 호출 필요, 배팅액 0원으로 바꾸고 판 종료
-                pairbat은 아예 처음에 시작 할 때 배팅할 지 물어보기
-                
-
-                */
-
-
+            switch(userChoice) { 
                case 1:
-                  game[i].blackjack();
-                  break;  
-               case 3:
-                  break;
-               case 4:
-                  game[i].stay();
-                  break;
-               case 5:
                   game[i].hit(cs.drawCard(), player, i);
                   break;
-               case 7:
-                  game[i].surrender();
+               case 2: // stay > 안 뽑고 종료
+                  playerEndGame[i]++;
                   break;
-               case 8:
+               case 3:
+                  game[i].doubleDown(cs.drawCard(), player, i, 10); 
+                  break; 
+               case 4:
                   game[i].insurance();
                   break;
-               case 9:
+               case 5:
                   game[i].evenMoney();
                   break;
-               case 10:
-                  game[i].doubleDown();
+               case 6: // 서렌
+                  game[i].surrender(player, i); 
+                  playerEndGame[i]++;
                   break;
             }
 

@@ -13,7 +13,7 @@ class Dealer extends GameParticipant {
         for(int i = 0; i < deck.length; i++) {
            switch(deck[i]) {
               case 'A': {
-                 deckTotal += 10;
+                 deckTotal += 11;
               }
               case '2': {
                  deckTotal += 2;
