@@ -17,12 +17,21 @@ public class CardShuffle {
         }
     }
 
+    public void shuffle() {
+        for(int i = 0; i < cardList.length; i++) {
+            cardList[i] = new ArrayList<>(Arrays.asList(
+               'A', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K'));
+        }
+    }
+
     public char drawCard() {
 
         int index1 = rand.nextInt(cardList.length);
         int index2 = rand.nextInt(cardList[index1].size());
+        
 
         char card = cardList[index1].get(index2);
+        
 
         cardList[index1].remove(index2);
 

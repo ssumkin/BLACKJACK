@@ -3,7 +3,11 @@ import java.lang.Math;
 
 public class BlackJack {
    Scanner scanner = new Scanner(System.in);
-   CardShuffle cs = new CardShuffle();
+   CardShuffle cs;
+
+   BlackJack() {
+      cs = new CardShuffle();
+   }
 
    void gameDescription() { // 초기 게임 안내
       System.out.print("\033[H\033[2J"); // 터미널 청소
@@ -51,9 +55,8 @@ public class BlackJack {
       
  
       while(mainGameLoop) {
-         
          for(int i = 0; i < player.length; i++) {
-           
+
             if(playerEndGame[i] == 1) { // 게임 끝난 플레이어에겐 묻지 않고 넘기기
                continue;
             }
@@ -117,9 +120,6 @@ public class BlackJack {
                   playerEndGame[i]++;
                   break;
             }
-
-            // game[i].push();
-
             
          }
          
@@ -131,19 +131,16 @@ public class BlackJack {
  
 
          if(endGame == gamer_of_num) { // 마지막 반복문 > 이 때 딜러 카드 연달아 뽑기
-
-            for(int i = 2; ; i++) {
-               if(dealer.sumOfCards() >= 17) {
-                  break;
-               }
-               dealer.deck[i] = cs.drawCard();  
-               
-            }
-
             mainGameLoop = false; 
          } 
  
       } 
+      for(int i = 2; ; i++) {
+         if(dealer.sumOfCards() >= 17) {
+            break;
+         }
+         dealer.deck[i] = cs.drawCard();  
+      }
 
       System.out.print("\033[H\033[2J");  
 
@@ -157,11 +154,9 @@ public class BlackJack {
          System.out.print("Player" + (i+1) + " 덱 : ");
          player[i].nowDeck();
 
-         
+          
 
- 
-
-         if(playerSum > dealerSum) { // 승리
+         if(playerSum > dealerSum && player[i].surrender != 1) { // 승리
             returnChips = game[i].bettingChips * 2;  
             if(player[i].blackJack > 0) { // 블랙잭 승리
                returnChips = game[i].bettingChips * 2.5;  
@@ -174,6 +169,10 @@ public class BlackJack {
          } else {
             returnChips = 0;
             winLoseCheck = "패배ㅠ";
+         }
+
+         if(player[i].surrender == 1) {
+            returnChips = game[i].bettingChips;
          }
 
          if(player[i].insurance > 0) {
@@ -189,9 +188,11 @@ public class BlackJack {
 
          System.out.println("Player" + (i+1) + " " + winLoseCheck);
          System.out.println("칩 : " + player[i].chips + "\n");
+
+          
       }
       
-      // this.gameStart();
+ 
 
    }
 
@@ -223,6 +224,7 @@ public class BlackJack {
 
       Dealer dealer = new Dealer(); // 딜러 객체 생성
       dealer.deck = new char[deckSize]; // 딜러 덱 크기 설정
+ 
       dealer.deck[0] = cs.drawCard();
       dealer.deck[1] = cs.drawCard();
 
@@ -243,13 +245,29 @@ public class BlackJack {
          player[i].deck[1] = cs.drawCard();
       }
 
-       
-      
-      BlackJack blackJack = new BlackJack();
-      blackJack.mainGame(gamerOfNum, dealer, player);
-      
-       
 
+      boolean gameRetryLoop = true; 
+        
+      while(gameRetryLoop) {
+         this.mainGame(gamerOfNum, dealer, player);
+         
+         for(int i = 0; i < cs.cardList.length; i++) {
+            cs.cardList[i].clear(); 
+         }
+         cs.shuffle();  
+
+         dealer.deck[0] = cs.drawCard();
+         dealer.deck[1] = cs.drawCard();
+         dealer.deck[2] = 0;
+         dealer.deck[3] = 0;
+         for(int i = 0; i < player.length; i++) {  
+            player[i].deck[0] = cs.drawCard();
+            player[i].deck[1] = cs.drawCard();
+            player[i].deck[2] = 0;
+            player[i].deck[3] = 0;
+            player[i].deck[4] = 0;
+         }
+      } 
    }
 
 
@@ -287,14 +305,9 @@ public class BlackJack {
 
 
    public static void main(String[] args) { 
-      BlackJack blackJack = new BlackJack();
-      
-      
-      
+      BlackJack blackJack = new BlackJack(); 
       blackJack.gameDescription();
-      boolean gameLoop = true;
-      
-
+      boolean gameLoop = true; 
       while(gameLoop) {
          
          int game = blackJack.scanner.nextInt();
@@ -317,13 +330,8 @@ public class BlackJack {
                System.out.print(">> ");
                break;
             }
-         }
-
-           
-       
-      }
-      
-        
+         } 
+      }  
    }
 }
 
