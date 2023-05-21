@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Game {
     
    Double battingChips; 
@@ -30,17 +32,50 @@ public class Game {
    }
 
    char hit(char card, Player[] player, int player_order) { // 처음 두장에서 만족하지 않고 카드를 더 뽑는 것
-  
+
       for(int i = 0; i < player[player_order].deck.length; i++) {
          if(player[player_order].deck[i] == 0) {
             player[player_order].deck[i] = card;
             break;
          }
       } 
- 
+
       System.out.println("새로운 카드 " + card);
 
       return card;
+   }
+
+
+   char pairBetSwitch(int n) {
+      Scanner scanner = new Scanner(System.in);      
+
+      int check = 0;
+
+      System.out.println("예상 카드를 입력해 주세요.");
+      System.out.print(">> ");
+      char index = scanner.next().charAt(0);
+
+      switch(index) { 
+         case 'A':
+         case '2':
+         case '3':
+         case '4':
+         case '5':
+         case '6':
+         case '7':
+         case '8':
+         case '9':
+         case 'J':
+         case 'Q':
+         case 'K':
+            check++;
+      }
+
+      if(check == 1) {
+         return index;
+      } 
+
+      return pairBetSwitch(n);
    }
 
    // 처음 받는 2개의 카드가 동일한 가치의 카드인지 예측 하는 것
@@ -51,7 +86,7 @@ public class Game {
    }
 
    double surrender(Player[] player, int player_order) { // 서렌치는 것 배팅액의 절반 만 잃음
-      this.battingChips = 0.0;
+      this.battingChips /= 2;
 
       for(int i = 0; i < player[player_order].deck.length; i++) {
             player[player_order].deck[i] = 0;
@@ -76,6 +111,38 @@ public class Game {
    int evenMoney() {
 
       return 0;
+   }
+
+
+   int doubleDownBatting(int n, Player[] player, int player_order, double batting_chips) {
+      Scanner scanner = new Scanner(System.in);      
+
+      int addBet; 
+      double max;
+
+      if(player[player_order].chips > batting_chips) {
+         System.out.println("추가 배팅금을 입력해 주세요. 최대 " + batting_chips + "개의 칩을 걸 수 있습니다.");
+         max = batting_chips;
+      } else {
+         System.out.println("추가 배팅금을 입력해 주세요. 최대 " + player[player_order].chips + "개의 칩을 걸 수 있습니다.");
+         max = player[player_order].chips;
+      }
+      System.out.print(">> ");
+
+      addBet = scanner.nextInt();
+
+      if(addBet > 0 && addBet <= max) {
+         n = 0;
+      } else {
+         System.out.println("배팅 금액을 다시 입력해 주세요.");
+      }
+
+      if(n == 0) {
+         return addBet;
+      }  
+      return doubleDownBatting(n, player, player_order, batting_chips);
+      
+        
    }
 
    char doubleDown(char card, Player[] player, int player_order, int batting_chips) { // 한 장의 카드만 더 받고 최초 배팅금액 한도 내에서 추가로 배팅

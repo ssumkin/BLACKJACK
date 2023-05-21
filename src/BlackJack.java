@@ -16,8 +16,6 @@ public class BlackJack {
       System.out.print(">> ");
    }
 
-
-
    void mainGame(int gamer_of_num, Dealer dealer, Player[] player) {
       Game[] game = new Game[gamer_of_num];
 
@@ -26,11 +24,11 @@ public class BlackJack {
 
       int round = 0; // 게임 횟수 > 2장을 처음 받았을 때만 가능한 것들이 있기 때문
       int userChoice;
+      double battingChips = 0.0;
 
       for(int i = 0; i < game.length; i++) {
          System.out.print("Player" + (i+1) + "의 배팅 금액을 입력 : "); 
-         double battingChips = scanner.nextDouble();
-          
+         battingChips = scanner.nextDouble();
 
          if(player[i].chips < battingChips) {
             System.out.println("현재 칩 개수 : " + player[i].chips);
@@ -50,16 +48,21 @@ public class BlackJack {
       while(mainGameLoop) {
          
          for(int i = 0; i < player.length; i++) {
-            
+           
             if(playerEndGame[i] == 1) { // 게임 끝난 플레이어에겐 묻지 않고 넘기기
                continue;
             }
 
-            if(round == 0) {
-               // 여기서 페어뱃 관련 처리
+            System.out.println("Dealer open card [" + dealer.deck[0] + "]");
+            if(round == 0) { // 페어뱃 처리
+ 
+               char index1 = game[i].pairBetSwitch(1);
+               char index2 = game[i].pairBetSwitch(1);
+
+               game[i].pairBet();
+                
             }
 
-            System.out.println("Dealer open card [" + dealer.deck[0] + "]");
             System.out.print("Player" + (i+1) + " 현재 덱 : ");
             player[i].nowDeck();
             int playerSum = player[i].sumOfCards();
@@ -76,7 +79,8 @@ public class BlackJack {
                   playerEndGame[i]++;
                   break;
                case 3:
-                  game[i].doubleDown(cs.drawCard(), player, i, 10); 
+                  int addBetChips = game[i].doubleDownBatting(1, player, i, battingChips);
+                  game[i].doubleDown(cs.drawCard(), player, i, addBetChips); 
                   break; 
                case 4:
                   game[i].insurance();
