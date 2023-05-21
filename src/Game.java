@@ -2,35 +2,57 @@ import java.util.Scanner;
 
 public class Game {
     
-   Double battingChips; 
+   Double bettingChips; 
+   Scanner scanner;
 
-   Game(double battingChips) {
-      this.battingChips = battingChips;
+   Game(double bettingChips) {
+      this.bettingChips = bettingChips;
+      scanner = new Scanner(System.in);
    }
  
-   Double blackjack() { //  
+   int gameChoice(int repeat_num, Player[] player, int player_order, int now_card_count) { 
+      System.out.println("HIT(1), STAY(2), DOUBLEDOWN(3), INSURANCE(4), SURRENDER(5)");
+      System.out.print(">> ");
+      int userChoice = scanner.nextInt();
       
+      if(!(userChoice > 0 || userChoice < 6)) {
+         System.out.println("1 ~ 5 사이의 숫자를 입력해 주세요.");
+      } else {
+         repeat_num = 0;
+      }
+      
+      if(userChoice == 3) {
+         if(now_card_count > 2) {
+            System.out.println("DOUBLEDOWN은 첫 라운드에만 할 수 있습니다.");
+            repeat_num = 1;
+         }
+      }
 
-      battingChips *= 2.5;
- 
-      return battingChips;
+      if(player[player_order].chips <= 0) {
+         if(userChoice == 3) {
+            System.out.println("추가 배팅할 수 있는 칩이 없습니다.");
+            repeat_num = 1;
+         }
+      }
+
+      if(repeat_num == 0) {
+         return userChoice;
+      } else {
+         System.out.println("다시 입력해 주세요.");
+      }
+
+      return gameChoice(repeat_num, player, player_order, now_card_count);
    }
 
-   int bust() { // 카드의 합이 21을 넘은 것 베팅금을 잃게됨
-
-      return 0;
+   Double blackjack() { //  
+      bettingChips *= 2.5;
+      return bettingChips;
    }
 
-   int push() { // 딜러 & 플레이어의 합이 동일한 경우 비기게 됨
-
-      return 0;
-   }
-
-   int stay() { // 카드를 더 뽑지 않고 차례를 마치는 것
-
-      return 0;
-   }
-
+   void bust(Player[] player, int player_order) { // 카드의 합이 21을 넘은 것 베팅금을 잃게됨
+      bettingChips = 0.0; 
+      player[player_order].bust = 1;
+   }   
    char hit(char card, Player[] player, int player_order) { // 처음 두장에서 만족하지 않고 카드를 더 뽑는 것
 
       for(int i = 0; i < player[player_order].deck.length; i++) {
@@ -45,84 +67,116 @@ public class Game {
       return card;
    }
 
+   double pairbetBetting(int repeat_num, Player[] player, int player_order, double betting_chips) {
+      int addBet; 
+      double max;
 
-   char pairBetSwitch(int n) {
-      Scanner scanner = new Scanner(System.in);      
-
-      int check = 0;
-
-      System.out.println("예상 카드를 입력해 주세요.");
+      System.out.println("배팅금을 입력해 주세요. 최대 " + player[player_order].chips + "개의 칩을 걸 수 있습니다.");
+      max = player[player_order].chips;
       System.out.print(">> ");
-      char index = scanner.next().charAt(0);
 
-      switch(index) { 
-         case 'A':
-         case '2':
-         case '3':
-         case '4':
-         case '5':
-         case '6':
-         case '7':
-         case '8':
-         case '9':
-         case 'J':
-         case 'Q':
-         case 'K':
-            check++;
+      addBet = scanner.nextInt();
+
+      if(addBet > 0 && addBet <= max) {
+         repeat_num = 0;
+      } else {
+         System.out.println("배팅 금액을 다시 입력해 주세요.");
       }
 
-      if(check == 1) {
-         return index;
-      } 
-
-      return pairBetSwitch(n);
+      if(repeat_num == 0) {
+         return addBet;
+      }  
+      return pairbetBetting(repeat_num, player, player_order, betting_chips);
+ 
    }
+
 
    // 처음 받는 2개의 카드가 동일한 가치의 카드인지 예측 하는 것
    // 맞다면 11배
-   int pairBet() {
+   void pairBet(Player[] player, int player_order, double pair_betting_chips) { 
 
-      return 0;
+      if(player[player_order].deck[0] == player[player_order].deck[1]) {
+         pair_betting_chips *= 12;
+      } else {
+         pair_betting_chips = 0;
+      }
+
+      player[player_order].chips += pair_betting_chips;
+
+      if(pair_betting_chips > 0) {
+         System.out.println("축하합니다. 페어베팅을 성공했습니다.");
+         System.out.println("현재 칩 개수 : " + player[player_order].chips);
+      } else {
+         System.out.println("페어베팅을 실패했습니다.");
+         System.out.println("현재 칩 개수 : " + player[player_order].chips);
+      } 
+ 
    }
 
-   double surrender(Player[] player, int player_order) { // 서렌치는 것 배팅액의 절반 만 잃음
-      this.battingChips /= 2;
+   void surrender(Player[] player, int player_order) { // 서렌치는 것 배팅액의 절반 만 잃음
+      bettingChips /= 2; 
+      player[player_order].surrender = 1;
+   }
 
-      for(int i = 0; i < player[player_order].deck.length; i++) {
-            player[player_order].deck[i] = 0;
-      } 
+ 
 
-      return this.battingChips;
+   double insuranceBetting(int repeat_num, Player[] player, int player_order, double betting_chips) { 
+      int addBet; 
+      double max;
+      double insuranceChips = betting_chips / 2;
+
+      if(player[player_order].chips > insuranceChips) {
+         System.out.println("인슈어런스 배팅금을 입력해 주세요. 최대 " + insuranceChips + "개의 칩을 걸 수 있습니다.");
+         max = insuranceChips;
+      } else {
+         System.out.println("인슈어런스 배팅금을 입력해 주세요. 최대 " + player[player_order].chips + "개의 칩을 걸 수 있습니다.");
+         max = player[player_order].chips;
+      }
+      System.out.print(">> ");
+
+      addBet = scanner.nextInt();
+
+      if(addBet > 0 && addBet <= max) {
+         repeat_num = 0;
+         bettingChips -= addBet;
+      } else {
+         System.out.println("배팅 금액을 다시 입력해 주세요.");
+      }
+
+      if(repeat_num == 0) {
+         return addBet;
+      }  
+      return insuranceBetting(repeat_num, player, player_order, betting_chips);
    }
 
 // 딜러의 오픈카드가 A일 경우 배팅액의 1/2범위 내에서 보험금 걸기
 // 딜러 블랙잭 : 보험금 두 배를 받음
 // 딜럭 블랙잭X : 보험금을 잃음   
-   int insurance() { 
-
-      return 0;
+   void insurance(double insurance_chips) { 
+      bettingChips -= insurance_chips;
    }
 
    /* 본인이 블랙잭이고 딜러의 오픈카드가 A일 때 딜러가 evenMoney를 물어봄
    * 이븐머니를 할 경우 배팅액과 동일한 금액을 받음
    * 안 할 경우 push로 비기거나
    * 블랙잭이 돼서 1.5배의 금액을 추가로 얻을 수 있음    
+   * 
+   * 이븐 머니 제외
     */
-   int evenMoney() {
+   // int evenMoney() {
 
-      return 0;
-   }
+   //    return 0;
+   // }
 
 
-   int doubleDownBatting(int n, Player[] player, int player_order, double batting_chips) {
-      Scanner scanner = new Scanner(System.in);      
+   int doubleDownBetting(int repeat_num, Player[] player, int player_order, double betting_chips) {   
 
       int addBet; 
       double max;
 
-      if(player[player_order].chips > batting_chips) {
-         System.out.println("추가 배팅금을 입력해 주세요. 최대 " + batting_chips + "개의 칩을 걸 수 있습니다.");
-         max = batting_chips;
+      if(player[player_order].chips > betting_chips) {
+         System.out.println("추가 배팅금을 입력해 주세요. 최대 " + betting_chips + "개의 칩을 걸 수 있습니다.");
+         max = betting_chips;
       } else {
          System.out.println("추가 배팅금을 입력해 주세요. 최대 " + player[player_order].chips + "개의 칩을 걸 수 있습니다.");
          max = player[player_order].chips;
@@ -132,21 +186,21 @@ public class Game {
       addBet = scanner.nextInt();
 
       if(addBet > 0 && addBet <= max) {
-         n = 0;
+         repeat_num = 0;
       } else {
          System.out.println("배팅 금액을 다시 입력해 주세요.");
       }
 
-      if(n == 0) {
+      if(repeat_num == 0) {
          return addBet;
       }  
-      return doubleDownBatting(n, player, player_order, batting_chips);
+      return doubleDownBetting(repeat_num, player, player_order, betting_chips);
       
         
    }
 
-   char doubleDown(char card, Player[] player, int player_order, int batting_chips) { // 한 장의 카드만 더 받고 최초 배팅금액 한도 내에서 추가로 배팅
-      this.battingChips += batting_chips;
+   char doubleDown(char card, Player[] player, int player_order, int betting_chips) { // 한 장의 카드만 더 받고 최초 배팅금액 한도 내에서 추가로 배팅
+      this.bettingChips += betting_chips;
 
       for(int i = 0; i < player[player_order].deck.length; i++) {
          if(player[player_order].deck[i] == 0) {
@@ -163,8 +217,8 @@ public class Game {
 
    
 
+   // 스플릿 제외
    // int split() {
-
    //    return 0;
    // }
 

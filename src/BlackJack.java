@@ -24,26 +24,31 @@ public class BlackJack {
 
       int round = 0; // 게임 횟수 > 2장을 처음 받았을 때만 가능한 것들이 있기 때문
       int userChoice;
-      double battingChips = 0.0;
+      double bettingChips = 0.0;
+      boolean mainGameLoop = true;
+      int pairBetCheck;
+      double pairbetChips;
+      double insuranceChips = 0;
+
+      double returnChips = 0.0;
 
       for(int i = 0; i < game.length; i++) {
-         System.out.print("Player" + (i+1) + "의 배팅 금액을 입력 : "); 
-         battingChips = scanner.nextDouble();
+         System.out.print("Player" + (i+1) + "의 배팅 금액 입력 : "); 
+         bettingChips = scanner.nextDouble();
 
-         if(player[i].chips < battingChips) {
+         if(player[i].chips < bettingChips) {
             System.out.println("현재 칩 개수 : " + player[i].chips);
             System.out.println("가지고 있는 칩보다 배팅을 많이 할 수 없습니다. 다시 입력해 주세요.");
             i--;
             continue;
          }
 
-         player[i].chips -= battingChips;
-         game[i] = new Game(battingChips);
+         player[i].chips -= bettingChips;
+         game[i] = new Game(bettingChips);
       }
       
       System.out.print("\033[H\033[2J");  
       
-      boolean mainGameLoop = true;
  
       while(mainGameLoop) {
          
@@ -52,24 +57,44 @@ public class BlackJack {
             if(playerEndGame[i] == 1) { // 게임 끝난 플레이어에겐 묻지 않고 넘기기
                continue;
             }
-
-            System.out.println("Dealer open card [" + dealer.deck[0] + "]");
-            if(round == 0) { // 페어뱃 처리
  
-               char index1 = game[i].pairBetSwitch(1);
-               char index2 = game[i].pairBetSwitch(1);
+            if(round == 0 && player[i].chips > 0) { // 페어뱃 처리 
+               System.out.println("Player" + (i+1) + "님 페어베팅을 하시겠습니까?");
+               System.out.println("페어베팅을 하신다면 1번을 하지 않으신다면 아무 숫자나 입력해 주세요.");
+               System.out.print(">> ");
 
-               game[i].pairBet();
-                
+               pairBetCheck = scanner.nextInt();
+
+               if(pairBetCheck == 1) { 
+                  pairbetChips = game[i].pairbetBetting(1, player, i, bettingChips);
+                  player[i].chips -= pairbetChips;
+
+                  game[i].pairBet(player, i, pairbetChips); 
+                  
+               }
+               continue;
             }
 
+            System.out.println("Dealer open card [" + dealer.deck[0] + "]");
             System.out.print("Player" + (i+1) + " 현재 덱 : ");
             player[i].nowDeck();
             int playerSum = player[i].sumOfCards();
             System.out.println("현재 덱 합계 : " + playerSum);
+ 
+            if(player[i].nowCardCount() == 2 && playerSum == 21) { // 플레이어 블랙잭 확인
+               player[i].blackJack = 1;
+            }
+            if(dealer.nowCardCount() == 2 && dealer.sumOfCards() == 21) { // 딜러 블랙잭 확인
+               dealer.blackJack = 1;
+            }
 
-            System.out.println("HIT(1), STAY(2), DOUBLEDOWN(3), INSURANCE(4), EVENMONEY(5), SURRENDER(6)");
-            userChoice = scanner.nextInt();
+            if(playerSum > 21) {
+               game[i].bust(player, i);
+               playerEndGame[i]++;
+               continue;
+            }
+
+            userChoice = game[i].gameChoice(1, player, i, player[i].nowCardCount());
             
             switch(userChoice) { 
                case 1:
@@ -78,24 +103,19 @@ public class BlackJack {
                case 2: // stay > 안 뽑고 종료
                   playerEndGame[i]++;
                   break;
-               case 3:
-                  int addBetChips = game[i].doubleDownBatting(1, player, i, battingChips);
+               case 3: // 더블다운
+                  int addBetChips = game[i].doubleDownBetting(1, player, i, bettingChips);
                   game[i].doubleDown(cs.drawCard(), player, i, addBetChips); 
                   break; 
-               case 4:
-                  game[i].insurance();
-                  break;
-               case 5:
-                  game[i].evenMoney();
-                  break;
-               case 6: // 서렌
-                  game[i].surrender(player, i); 
+               case 4: // 보험금
+                  insuranceChips = game[i].insuranceBetting(1, player, i, bettingChips);
+                  player[i].insurance = 1;
+                  game[i].insurance(insuranceChips);
+                  break; 
+               case 5: // 서렌
+                  game[i].surrender(player, i);  
                   playerEndGame[i]++;
                   break;
-            }
-
-            if(playerSum > 21) {
-               game[i].bust();
             }
 
             // game[i].push();
@@ -104,20 +124,74 @@ public class BlackJack {
          }
          
          round++;
-
+         endGame = 0;
          for (int i : playerEndGame) {
             endGame += i; 
          }
+ 
 
          if(endGame == gamer_of_num) { // 마지막 반복문 > 이 때 딜러 카드 연달아 뽑기
-            mainGameLoop = false;
-         }
+
+            for(int i = 2; ; i++) {
+               if(dealer.sumOfCards() >= 17) {
+                  break;
+               }
+               dealer.deck[i] = cs.drawCard();  
+               
+            }
+
+            mainGameLoop = false; 
+         } 
+ 
+      } 
+
+      System.out.print("\033[H\033[2J");  
+
+      for(int i = 0; i < player.length; i++) {
+         String winLoseCheck = "";
+         int dealerSum = dealer.sumOfCards() > 21 ? 0 : dealer.sumOfCards();
+         int playerSum = player[i].sumOfCards() > 21 ? 0 : player[i].sumOfCards();
+
+         System.out.print("딜러 덱 : ");
+         dealer.nowDeck();
+         System.out.print("Player" + (i+1) + " 덱 : ");
+         player[i].nowDeck();
+
          
 
+ 
 
-          
+         if(playerSum > dealerSum) { // 승리
+            returnChips = game[i].bettingChips * 2;  
+            if(player[i].blackJack > 0) { // 블랙잭 승리
+               returnChips = game[i].bettingChips * 2.5;  
+            }
+            winLoseCheck = "승리!";
+
+         } else if(playerSum == dealerSum && player[i].bust != 1 && player[i].surrender != 1) { // 비김
+            returnChips = game[i].bettingChips;
+            winLoseCheck = "비김";
+         } else {
+            returnChips = 0;
+            winLoseCheck = "패배ㅠ";
+         }
+
+         if(player[i].insurance > 0) {
+            if(dealer.blackJack == 1) {
+               insuranceChips *= 2;
+               player[i].chips += insuranceChips;
+            } else {
+               insuranceChips = 0;
+            }
+         }
+
+         player[i].chips += returnChips;
+
+         System.out.println("Player" + (i+1) + " " + winLoseCheck);
+         System.out.println("칩 : " + player[i].chips + "\n");
+      }
       
-      }  
+      // this.gameStart();
 
    }
 
@@ -130,12 +204,19 @@ public class BlackJack {
       System.out.print("\033[H\033[2J");
       System.out.println("플레이어 숫자를 입력해 주세요. (1 ~ 7 입력 가능)");
       System.out.print(">> ");
-      int gamerOfNum = scanner.nextInt(); // 플레이어 전체 숫자 입력
+      int gamerOfNum = 0;
+      boolean playerLoop = true;
 
-      if(gamerOfNum < 1 || gamerOfNum > 7) {
-         System.out.print("\033[H\033[2J");
-         System.out.print("플레이어 숫자를 다시 입력해 주세요 : ");
-         return;
+      while(playerLoop) {
+         gamerOfNum = scanner.nextInt(); // 플레이어 전체 숫자 입력
+
+         if(gamerOfNum < 1 || gamerOfNum > 7) {
+            System.out.print("\033[H\033[2J");
+            System.out.println("플레이어 숫자를 다시 입력해 주세요. (1 ~ 7 입력 가능)");
+            System.out.print(">> ");
+         } else {
+            playerLoop = false;
+         }
       }
 
       int deckSize = (int)Math.ceil(52 / (gamerOfNum + 1));  
@@ -149,6 +230,12 @@ public class BlackJack {
       for(int i = 0; i < player.length; i++) { // 플레이어마다 객체 생성
          System.out.print("Player" + (i+1) + " 칩 개수 입력 : ");
          Double playerChips = scanner.nextDouble();
+
+         if(playerChips <= 0) {
+            System.out.println("칩 개수 다시 입력해 주세요.");
+            i--;
+            continue;
+         }
 
          player[i] = new Player(playerChips); // 플레이어 마다 얼마 있는지 입력
          player[i].deck = new char[deckSize]; // 플레이어 덱 크기 설정
@@ -226,7 +313,7 @@ public class BlackJack {
                break;
             }
             default: { 
-               System.out.println("1 ~ 3 사이의 숫자를 입력해 주세요.3");
+               System.out.println("1 ~ 3 사이의 숫자를 입력해 주세요.");
                System.out.print(">> ");
                break;
             }
